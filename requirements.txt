@@ -1,0 +1,4 @@
+aiohttp
+aiohttp-sessions
+python-socketio
+redis

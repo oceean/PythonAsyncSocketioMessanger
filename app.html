@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css'>
+    </head>
+    <body>
+        <div class='container'>
+            <h1 class='title'>Your todos</h1>
+            <div class='tags' id='todos'><small>loading...</small></div>
+            <div class='field'>
+                <div class='control'>
+                    <input class='input' type='text' id='todoinput' onkeydown='if(event.keyCode == 13){addtodo()};'>
+                </div>
+            </div>
+            <div class='field'>
+                <div class='control'>
+                    <button class='button' onclick='addtodo()'>add</button>
+                </div>
+            </div>
+        </div>
+
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js'></script>
+        <script>
+        const socket = io('http://localhost:8080');
+        socket.on('todos', (data) => {
+            let d = '';
+            for (const todo of data) {
+                d += `<span class='tag is-warning is-large' onclick='done("${todo}")'>${todo}</span>`
+            }
+            document.getElementById('todos').innerHTML = d;
+        });
+        let addtodo = () => {
+            let ti = document.getElementById('todoinput');
+            socket.emit('add todo', ti.value);
+            ti.value = '';
+        }
+        let done = (text) => { socket.emit('done todo', text) }
+        socket.emit('get todo');
+        </script>
+    </body>
+</html>
